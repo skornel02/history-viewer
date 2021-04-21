@@ -4,7 +4,6 @@ import {
     Node,
     Text
 } from 'domhandler';
-import ReactDOMServer from 'react-dom/server'
 
 const globalContent = "https://docs.google.com/document/d/e/2PACX-1vQvXnfWjCvELzplW7pWR4SU63EJpGZ38b5tq7G2JKHqY6qf8RJOnabaYDSwXGsvbC8CTqq3ieXlzvnR/pub?embedded=true"
 

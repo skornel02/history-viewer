@@ -4,7 +4,7 @@ import { getHistoryItemById, getTopicFromItem, HistoryItem, loadHistoryItems, Hi
 import HistoryViewer from "./HistoryViewer";
 import './App.css';
 
-function App() {
+const App: React.FunctionComponent = () => {
     const [topics, setTopics] = useState<HistoryTopic[]>();
     const [historyItem, setHistoryItem] = useState<HistoryItem>();
     const topic = React.useMemo(() => topics !== undefined && historyItem !== undefined
