@@ -21,6 +21,7 @@ jobs:
           npm run build --release
         env:
           PUBLIC_URL: https://skornel02.github.io/history-viewer/
+          process.env.CI: false
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
