@@ -1,0 +1,14 @@
+#reader {
+    width: 100%;
+    padding: 5%;
+}
+
+#reader html {
+    width: 100%;
+}
+
+#reader body {
+    padding: 0px;
+    margin: 0px;
+    max-width: 700px;
+}
