@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "https://skornel02.github.io/history-viewer/static/css/main.9d1d1712.chunk.css",
+    "main.js": "https://skornel02.github.io/history-viewer/static/js/main.52a971c4.chunk.js",
+    "main.js.map": "https://skornel02.github.io/history-viewer/static/js/main.52a971c4.chunk.js.map",
+    "runtime-main.js": "https://skornel02.github.io/history-viewer/static/js/runtime-main.e2682302.js",
+    "runtime-main.js.map": "https://skornel02.github.io/history-viewer/static/js/runtime-main.e2682302.js.map",
+    "static/js/2.99249c95.chunk.js": "https://skornel02.github.io/history-viewer/static/js/2.99249c95.chunk.js",
+    "static/js/2.99249c95.chunk.js.map": "https://skornel02.github.io/history-viewer/static/js/2.99249c95.chunk.js.map",
+    "static/js/3.2dfb9963.chunk.js": "https://skornel02.github.io/history-viewer/static/js/3.2dfb9963.chunk.js",
+    "static/js/3.2dfb9963.chunk.js.map": "https://skornel02.github.io/history-viewer/static/js/3.2dfb9963.chunk.js.map",
+    "index.html": "https://skornel02.github.io/history-viewer/index.html",
+    "static/css/main.9d1d1712.chunk.css.map": "https://skornel02.github.io/history-viewer/static/css/main.9d1d1712.chunk.css.map",
+    "static/js/2.99249c95.chunk.js.LICENSE.txt": "https://skornel02.github.io/history-viewer/static/js/2.99249c95.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e2682302.js",
+    "static/js/2.99249c95.chunk.js",
+    "static/css/main.9d1d1712.chunk.css",
+    "static/js/main.52a971c4.chunk.js"
+  ]
+}
