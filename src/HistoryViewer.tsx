@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { HistoryItem } from './HistoryFiles';
 import "./HistoryViewer.css";
-import parse, { DOMNode, domToReact } from 'html-react-parser';
+import parse, { attributesToProps, DOMNode, domToReact } from 'html-react-parser';
 import {
     Element,
 } from 'domhandler';
@@ -20,7 +20,7 @@ const HistoryViewer: React.FunctionComponent<{
             headers.append('pragma', 'no-cache');
             headers.append('cache-control', 'no-cache');
 
-            fetch(initialItem.publishUrl, {headers})
+            fetch(`https://docs.google.com/document/u/1/d/${initialItem.id}/pub?embedded=true&r=${Math.floor(Math.random() * 10000)}`, {headers, redirect: 'manual'})
                 .then(response => response.text())
                 .then(html => {
                     setHtml(html);
@@ -33,9 +33,18 @@ const HistoryViewer: React.FunctionComponent<{
     ) => JSX.Element | undefined | null = React.useCallback((node: DOMNode) => {
         if (node.type === "tag") {
             const element: Element = node as Element;
+            if (element.tagName === "html" || element.tagName === "head") {
+                return <>{domToReact(element.children, {replace})}</>;
+            }
+            if (element.tagName === "body") {
+                const props = attributesToProps(element.attribs);
+                return <div id="contentBody" {...props}>
+                    {domToReact(element.children, {replace})}
+                </div>
+            }
             if (element.tagName === "a") {
                 return <a style={{cursor: "pointer"}} onClick={() => onClickUrl(element.attribs.href)}>
-                    {domToReact(element.children)}
+                    {domToReact(element.children, {replace})}
                 </a>
             }
         }

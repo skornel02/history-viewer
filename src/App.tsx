@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Content from "./Content";
-import { getHistoryItemById, getTopicFromItem, HistoryItem, loadHistoryItems, HistoryTopic } from "./HistoryFiles";
+import { getHistoryItemById, getTopicFromItem, HistoryItem, loadHistoryItems, HistoryTopic, getIdFromGoogleLink } from "./HistoryFiles";
 import HistoryViewer from "./HistoryViewer";
 import './App.css';
 
@@ -14,9 +14,7 @@ const App: React.FunctionComponent = () => {
     const handleUrlClick = (url: string) => {
         if (topics === undefined) return;
 
-        const matches = url.match(/id%3D(.*)&sa.*/);
-        const id = (matches ?? ["", "-"])[1];
-        console.log(id);
+        const id = getIdFromGoogleLink(url);
         const nextItem = getHistoryItemById(topics, id);
         console.log(nextItem);
         if (nextItem) {
@@ -52,7 +50,7 @@ const App: React.FunctionComponent = () => {
                 {topic?.name}
             </h1>
             <hr />
-            <HistoryViewer key={historyItem?.realUrl ?? "not-selected"}
+            <HistoryViewer key={historyItem?.id ?? "not-selected"}
                 initialItem={historyItem}
                 onClickUrl={handleUrlClick}
             />

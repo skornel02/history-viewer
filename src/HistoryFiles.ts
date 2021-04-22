@@ -5,7 +5,7 @@ import {
     Text
 } from 'domhandler';
 
-const globalContent = "https://docs.google.com/document/d/e/2PACX-1vQvXnfWjCvELzplW7pWR4SU63EJpGZ38b5tq7G2JKHqY6qf8RJOnabaYDSwXGsvbC8CTqq3ieXlzvnR/pub?embedded=true"
+const globalContent = "https://docs.google.com/document/d/1ltZCNiI154npdUWUAHFuZC-lCZ32fYW7UVEvEru5Xxs/pub?embedded=true"
 
 export interface HistoryTopic {
     name: string;
@@ -14,8 +14,7 @@ export interface HistoryTopic {
 
 export interface HistoryItem {
     name: string;
-    realUrl: string;
-    publishUrl: string;
+    id: string;
 }
 
 const nodeToText = (node: Node): string => {
@@ -57,19 +56,17 @@ export function loadHistoryItems(): Promise<HistoryTopic[]> {
             }
             let item: HistoryItem = {
                 name: "",
-                publishUrl: "",
-                realUrl: ""
+                id: ""
             }
 
             const pushItem = () => {
-                if (item.name.length !== 0 && item.publishUrl.length !== 0 && item.realUrl.length !== 0) {
+                if (item.name.length !== 0 && item.id.length !== 0) {
                     topic.items.push(item);
                     console.log("Persisting item: ", item.name);
                 }
             }
 
             const pushTopic = () => {
-                pushItem();
                 if (topic.name.length !== 0) {
                     allTopics.push(topic);                    
                     console.log("Persisting topic: ", topic.name);
@@ -89,29 +86,27 @@ export function loadHistoryItems(): Promise<HistoryTopic[]> {
                         }
                         item = {
                             name: "",
-                            publishUrl: "",
-                            realUrl: ""
+                            id: ""
                         }
                         console.log("Reading topic: ", topic.name);
                     } else if (childElement.name === "h2") {
-                        pushItem();
-                        item = {
-                            name: nodeToText( childElement),
-                            publishUrl: "",
-                            realUrl: "",
-                        }
+                        console.log(childElement);
                         console.log("Reading item: ", item.name);
-                    } else if (childElement.name === "p") {
-                        const content = nodeToText( childElement)
-                            .replace(/\/$/, '');
-                        if (content.startsWith('https://docs.google.com/document/d/e/')) {
-                            console.log("Found publish url...")
-                            item.publishUrl = content;
-                        } else if (content.startsWith('https://docs.google.com/document/d/')) {
-                            console.log("Found real url...")
-                            item.realUrl = content;
+                        if (childElement.children.length > 0 
+                            && childElement.children[0].type === "tag"
+                            &&  (childElement.children[0] as Element).children.length > 0
+                            && (childElement.children[0] as Element).children[0].type === "tag") {
+                            const url = ((childElement.children[0] as Element).children[0] as Element).attribs['href'] ?? "";
+                            console.log(url);
+                            const id = getIdFromGoogleLink(url);
+                            console.log(id);
+                            item = {
+                                name: nodeToText( childElement),
+                                id,
+                            }
+                            pushItem();
                         }
-                    }
+                    } 
                 }
             }
             pushTopic();
@@ -131,9 +126,20 @@ export function getTopicFromItem(topics: HistoryTopic[], item: HistoryItem): His
 export function getHistoryItemById(topics: HistoryTopic[], id: string): HistoryItem | undefined {
     for (const topic of topics) {
         for (const item of topic.items) {
-            if (item.realUrl.endsWith(id)) 
+            if (item.id === id) 
                 return item;
         }
     }
     return undefined;
+}
+
+export function getIdFromGoogleLink(link: string): string {    
+    const matches1 = link.match(/d\/(.*)&sa.*/);
+    const matches2 = link.match(/d\/(.*)\//);
+    const matches3 = link.match(/id%3D(.*)&sa.*/);
+    
+    const matches = matches1 ?? matches2 ?? matches3 ?? ["", "-"];
+    const id = matches[1]
+        .replace(/\/edit$/, '');
+    return id;
 }
