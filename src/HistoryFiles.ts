@@ -137,9 +137,10 @@ export function getIdFromGoogleLink(link: string): string {
     const matches1 = link.match(/d\/(.*)&sa.*/);
     const matches2 = link.match(/d\/(.*)\//);
     const matches3 = link.match(/id%3D(.*)&sa.*/);
-    
+
     const matches = matches1 ?? matches2 ?? matches3 ?? ["", "-"];
     const id = matches[1]
-        .replace(/\/edit$/, '');
+        .replace(/\/edit$/, '')
+        .replace(/\//, '');
     return id;
 }
