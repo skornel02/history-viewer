@@ -4,11 +4,16 @@ import { getHistoryItemById, getTopicFromItem, HistoryItem, loadHistoryItems, Hi
 import HistoryViewer from "./HistoryViewer";
 import './App.css';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { Divider, IconButton, SwipeableDrawer, Typography } from "@material-ui/core";
-import { Menu, ArrowLeft, ArrowRight } from '@material-ui/icons';
+import { Divider, IconButton, MenuItem, SwipeableDrawer, Typography, Menu } from "@material-ui/core";
+import { Menu as MenuIcon, ArrowLeft, ArrowRight } from '@material-ui/icons';
+import Loader from "react-loader-spinner";
+import { useConfirm } from "material-ui-confirm";
 
 const App: React.FunctionComponent = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const confirm = useConfirm();
     const [topics, setTopics] = useState<HistoryTopic[]>();
     const [historyItem, setHistoryItem] = useState<HistoryItem>();
     const topic: HistoryTopic | undefined = React.useMemo(() => topics !== undefined && historyItem !== undefined
@@ -40,13 +45,23 @@ const App: React.FunctionComponent = () => {
 
         const id = getIdFromGoogleLink(url);
         const nextItem = getHistoryItemById(topics, id);
-        console.log(nextItem);
         if (nextItem) {
             setHistoryItem(nextItem);
+        } else {
+            confirm({
+                title: "Biztos megszeretné nyitni ezt a külső hivatkozást?",
+                cancellationText: "Nem",
+                confirmationText: "Igen",
+            }).then(() => {
+                const opened = window.open(url, '_blank');
+                if (opened) {
+                    opened.focus();
+                }
+            });
         }
     }
 
-    const handleSelectItem =  React.useCallback((item: HistoryItem) => {
+    const handleSelectItem = React.useCallback((item: HistoryItem) => {
         setHistoryItem(item);
     }, []);
 
@@ -78,27 +93,72 @@ const App: React.FunctionComponent = () => {
         }
     }, [handleLeft, handleRight])
 
-    useEffect(() => {        
+    const registerTouch = React.useCallback((window: Window | null | undefined): () => void => {
+        if (window === undefined || window == null) {
+            return () => {
+                //
+            };
+        }
+        let start: Touch | null = null;
+        let startTime = new Date();
+
+        const touchStart = (e: TouchEvent) => {
+            if (e.touches.length > 0) {
+                start = e.touches.item(0);
+                startTime = new Date()
+            } else {
+                start = null;
+            }
+        };
+        const touchEnd = (e: TouchEvent) => {
+            const swipeWidth = window.outerWidth * 0.6;
+            if (start !== null) {
+                const end = e.changedTouches.item(0);
+                if (end === null) return;
+
+                if (Math.abs(start.pageY - end.pageY) > 10) return;
+                if (new Date().getTime() - startTime.getTime() > 1000) return;
+
+                if (start.pageX + swipeWidth < end.pageX) {
+                    handleLeft();
+                }
+                if (start.pageX - swipeWidth > end.pageX) {
+                    handleRight();
+                }
+            }
+        };
+
+        window.addEventListener('touchstart', touchStart)
+        window.addEventListener('touchend', touchEnd)
+        return () => {
+            window.removeEventListener('touchstart', touchStart);
+            window.removeEventListener('touchend', touchEnd);
+        }
+    }, [handleLeft, handleRight]);
+
+    useEffect(() => {
+        const deregisterTouch = registerTouch(window);
         document.addEventListener('keydown', keyboardHandler);
         return () => {
             document.removeEventListener('keydown', keyboardHandler);
+            deregisterTouch();
         }
     }, [keyboardHandler])
 
     if (topics === undefined) {
         return (
-            <>
-                Loading
-            </>
+            <div style={{ width: "100vw", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Loader type="TailSpin" color="#00BFFF" width="10vw" />
+            </div>
         )
     }
 
     return (
         <>
             <CssBaseline />
-            <div style={{ float: "left" }}>
+            <div style={{ position: "absolute", left: 0, top: 0 }}>
                 <IconButton onClick={() => setDrawerOpen(true)}>
-                    <Menu />
+                    <MenuIcon />
                 </IconButton>
             </div>
             <SwipeableDrawer
@@ -110,13 +170,24 @@ const App: React.FunctionComponent = () => {
                 <Content topics={topics} selectItem={handleSelectItem} />
             </SwipeableDrawer>
             <div id="content">
-                <Typography variant="h2" align="center">
+                <Typography variant="h2" align="center" onClick={(e) => {
+                    setAnchorEl(e.currentTarget);
+                    setMenuOpen(true);
+                }}>
                     {topic?.name}
                 </Typography>
+                <Menu anchorEl={anchorEl} open={menuOpen} onClose={() => setMenuOpen(false)} keepMounted>
+                    {topics.map(topic => <MenuItem key={`menu-${topic.name}`} onClick={() => {
+                        handleSelectItem(topic.items[0]);
+                        setMenuOpen(false);
+                    }}>
+                        {topic.name}
+                    </MenuItem>)}
+                </Menu>
                 <div style={{ display: "flex" }}>
                     <div style={{ width: "50%" }}>
                         <div style={{ margin: "0 auto 0 0", width: "fit-content", display: "flex", alignItems: "center" }}>
-                            <IconButton onClick={handleLeft}  style={{display: leftItem === undefined ? "none" : "inherit"}}>
+                            <IconButton onClick={handleLeft} style={{ display: leftItem === undefined ? "none" : "inherit" }}>
                                 <ArrowLeft />
                             </IconButton>
                             <Typography variant="body1">
@@ -129,8 +200,8 @@ const App: React.FunctionComponent = () => {
                             <Typography variant="body1">
                                 {rightItem?.name}
                             </Typography>
-                            <IconButton onClick={handleRight} style={{display: rightItem === undefined ? "none" : "inherit"}}>
-                                <ArrowRight  />
+                            <IconButton onClick={handleRight} style={{ display: rightItem === undefined ? "none" : "inherit" }}>
+                                <ArrowRight />
                             </IconButton>
                         </div>
                     </div>
@@ -140,6 +211,7 @@ const App: React.FunctionComponent = () => {
                     initialItem={historyItem}
                     onClickUrl={handleUrlClick}
                     handleKeyboard={keyboardHandler}
+                    registerTouchHandler={registerTouch}
                 />
                 <Divider />
             </div>

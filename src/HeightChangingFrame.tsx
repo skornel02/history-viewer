@@ -4,7 +4,8 @@ import Frame from 'react-frame-component';
 interface IProps {
     children: React.ReactNode;
     width: string;
-    handleKeyboard?: (e: KeyboardEvent) => void;
+    handleKeyboard?: (e: KeyboardEvent) => void;    
+    registerTouchHandler?: (window: Window | null | undefined) => () => void;
 }
 
 interface IFrame {
@@ -18,7 +19,8 @@ interface FrameRef extends Frame {
 export const HeightChangingFrame: React.FunctionComponent<IProps> = ({
     children,
     width,
-    handleKeyboard
+    handleKeyboard,
+    registerTouchHandler = () => { return () => {/* */}}
 }) => {
     const [height, setHeight] = useState(500);
     const iframeRef = React.createRef<FrameRef>();
@@ -36,6 +38,7 @@ export const HeightChangingFrame: React.FunctionComponent<IProps> = ({
         if (handleKeyboard) {
             iframeRef.current?.node.contentWindow?.addEventListener('keydown', handleKeyboard);
         }
+        const unregisterTouch = registerTouchHandler(iframeRef.current?.node.contentWindow);
         const inter = setInterval(() => {
             handleResize(iframeRef);
         }, 200);
@@ -44,6 +47,7 @@ export const HeightChangingFrame: React.FunctionComponent<IProps> = ({
                 iframeRef.current?.node.contentWindow?.removeEventListener('keydown', handleKeyboard);
             }
             clearInterval(inter);
+            unregisterTouch();
         }
     }, [children]);
     return (

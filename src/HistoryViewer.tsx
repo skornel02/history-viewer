@@ -14,8 +14,9 @@ const HistoryViewer: React.FunctionComponent<{
     initialItem?: HistoryItem,
     onClickUrl: (url: string) => void;
     handleKeyboard?: (e: KeyboardEvent) => void;
+    registerTouchHandler?: (window: Window | null | undefined) => () => void;
 }> = props => {
-    const { initialItem, onClickUrl, handleKeyboard } = props;
+    const { initialItem, onClickUrl, handleKeyboard, registerTouchHandler } = props;
     const [html, setHtml] = useState<string>();
     useEffect(() => {
         if (initialItem === undefined)
@@ -73,7 +74,7 @@ const HistoryViewer: React.FunctionComponent<{
     });
 
     return (
-        <HeightChangingFrame width="100%" handleKeyboard={handleKeyboard}>
+        <HeightChangingFrame width="100%" handleKeyboard={handleKeyboard} registerTouchHandler={registerTouchHandler}>
             <CustomReaderCss />
             {parsed}
         </HeightChangingFrame>
