@@ -1,25 +1,25 @@
 {
   "files": {
     "main.css": "https://skornel02.github.io/history-viewer/static/css/main.0e4dd6a0.chunk.css",
-    "main.js": "https://skornel02.github.io/history-viewer/static/js/main.b3c287bd.chunk.js",
-    "main.js.map": "https://skornel02.github.io/history-viewer/static/js/main.b3c287bd.chunk.js.map",
-    "runtime-main.js": "https://skornel02.github.io/history-viewer/static/js/runtime-main.7bf0a41e.js",
-    "runtime-main.js.map": "https://skornel02.github.io/history-viewer/static/js/runtime-main.7bf0a41e.js.map",
+    "main.js": "https://skornel02.github.io/history-viewer/static/js/main.b5e67a75.chunk.js",
+    "main.js.map": "https://skornel02.github.io/history-viewer/static/js/main.b5e67a75.chunk.js.map",
+    "runtime-main.js": "https://skornel02.github.io/history-viewer/static/js/runtime-main.89a0af74.js",
+    "runtime-main.js.map": "https://skornel02.github.io/history-viewer/static/js/runtime-main.89a0af74.js.map",
     "static/css/2.ab75b8d7.chunk.css": "https://skornel02.github.io/history-viewer/static/css/2.ab75b8d7.chunk.css",
-    "static/js/2.e836e649.chunk.js": "https://skornel02.github.io/history-viewer/static/js/2.e836e649.chunk.js",
-    "static/js/2.e836e649.chunk.js.map": "https://skornel02.github.io/history-viewer/static/js/2.e836e649.chunk.js.map",
-    "static/js/3.75d106a9.chunk.js": "https://skornel02.github.io/history-viewer/static/js/3.75d106a9.chunk.js",
-    "static/js/3.75d106a9.chunk.js.map": "https://skornel02.github.io/history-viewer/static/js/3.75d106a9.chunk.js.map",
+    "static/js/2.9f8d7cfc.chunk.js": "https://skornel02.github.io/history-viewer/static/js/2.9f8d7cfc.chunk.js",
+    "static/js/2.9f8d7cfc.chunk.js.map": "https://skornel02.github.io/history-viewer/static/js/2.9f8d7cfc.chunk.js.map",
+    "static/js/3.48bd6d7b.chunk.js": "https://skornel02.github.io/history-viewer/static/js/3.48bd6d7b.chunk.js",
+    "static/js/3.48bd6d7b.chunk.js.map": "https://skornel02.github.io/history-viewer/static/js/3.48bd6d7b.chunk.js.map",
     "index.html": "https://skornel02.github.io/history-viewer/index.html",
     "static/css/2.ab75b8d7.chunk.css.map": "https://skornel02.github.io/history-viewer/static/css/2.ab75b8d7.chunk.css.map",
     "static/css/main.0e4dd6a0.chunk.css.map": "https://skornel02.github.io/history-viewer/static/css/main.0e4dd6a0.chunk.css.map",
-    "static/js/2.e836e649.chunk.js.LICENSE.txt": "https://skornel02.github.io/history-viewer/static/js/2.e836e649.chunk.js.LICENSE.txt"
+    "static/js/2.9f8d7cfc.chunk.js.LICENSE.txt": "https://skornel02.github.io/history-viewer/static/js/2.9f8d7cfc.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.7bf0a41e.js",
+    "static/js/runtime-main.89a0af74.js",
     "static/css/2.ab75b8d7.chunk.css",
-    "static/js/2.e836e649.chunk.js",
+    "static/js/2.9f8d7cfc.chunk.js",
     "static/css/main.0e4dd6a0.chunk.css",
-    "static/js/main.b3c287bd.chunk.js"
+    "static/js/main.b5e67a75.chunk.js"
   ]
 }
