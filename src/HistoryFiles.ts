@@ -33,17 +33,19 @@ export function loadHistoryItems(): Promise<HistoryTopic[]> {
     headers.append('pragma', 'no-cache');
     headers.append('cache-control', 'no-cache');
 
-    return fetch(globalContent, {headers}).then(response => response.text())
+    return fetch(globalContent, { headers }).then(response => response.text())
         .then(html => {
-            console.log(html);
-            const domTree = htmlToDOM(html);
+            const repairedHtml = html.replace('</head>', '</head><body>') + "</body>";
+            console.log(repairedHtml);
+            const domTree = htmlToDOM(repairedHtml);
             if (domTree.length === 0)
                 throw new Error("Hiba a főtartalomjegyzék feldolgozása közben! html");
-            
-            const htmlRoot = domTree[0] as Element;
 
-            console.log(htmlRoot);
-            const body = htmlRoot.children.find(child => child.type === "tag" && (child as Element).name === "body") as Element | undefined;
+            console.log(domTree);
+            const body = domTree[2] as Element;
+
+            // console.log(htmlRoot);
+            // const body = htmlRoot.children.find(child => child.type === "tag" && (child as Element).name === "body") as Element | undefined;
             console.log(body);
             if (body === undefined)
                 throw new Error("Hiba a főtartalomjegyzék feldolgozása közben! body");
@@ -68,18 +70,20 @@ export function loadHistoryItems(): Promise<HistoryTopic[]> {
 
             const pushTopic = () => {
                 if (topic.name.length !== 0) {
-                    allTopics.push(topic);                    
+                    allTopics.push(topic);
                     console.log("Persisting topic: ", topic.name);
                 }
             }
+            const rootDiv = body.children.filter(child => child.type === "tag" && (child as Element).name == "div")[0] as Element;
 
-            for (const child of body.children) {
+
+            for (const child of rootDiv.children) {
                 if (child.type === "tag") {
                     const childElement = child as Element;
                     if (childElement.name === "h1") {
                         pushTopic();
 
-                        const topicTitle = nodeToText( childElement);
+                        const topicTitle = nodeToText(childElement);
                         topic = {
                             name: topicTitle,
                             items: []
@@ -92,21 +96,21 @@ export function loadHistoryItems(): Promise<HistoryTopic[]> {
                     } else if (childElement.name === "h2") {
                         console.log(childElement);
                         console.log("Reading item: ", item.name);
-                        if (childElement.children.length > 0 
+                        if (childElement.children.length > 0
                             && childElement.children[0].type === "tag"
-                            &&  (childElement.children[0] as Element).children.length > 0
+                            && (childElement.children[0] as Element).children.length > 0
                             && (childElement.children[0] as Element).children[0].type === "tag") {
                             const url = ((childElement.children[0] as Element).children[0] as Element).attribs['href'] ?? "";
                             console.log(url);
                             const id = getIdFromGoogleLink(url);
                             console.log(id);
                             item = {
-                                name: nodeToText( childElement),
+                                name: nodeToText(childElement),
                                 id,
                             }
                             pushItem();
                         }
-                    } 
+                    }
                 }
             }
             pushTopic();
@@ -126,14 +130,14 @@ export function getTopicFromItem(topics: HistoryTopic[], item: HistoryItem): His
 export function getHistoryItemById(topics: HistoryTopic[], id: string): HistoryItem | undefined {
     for (const topic of topics) {
         for (const item of topic.items) {
-            if (item.id === id) 
+            if (item.id === id)
                 return item;
         }
     }
     return undefined;
 }
 
-export function getIdFromGoogleLink(link: string): string {    
+export function getIdFromGoogleLink(link: string): string {
     const matches1 = link.match(/d\/(.*)&sa.*/);
     const matches2 = link.match(/d\/(.*)\//);
     const matches3 = link.match(/id%3D(.*)&sa.*/);

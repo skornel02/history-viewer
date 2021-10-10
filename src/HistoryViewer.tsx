@@ -29,6 +29,7 @@ const HistoryViewer: React.FunctionComponent<{
             fetch(`https://docs.google.com/document/u/1/d/${initialItem.id}/pub?embedded=true&r=${Math.floor(Math.random() * 10000)}`, { headers, redirect: 'manual' })
                 .then(response => response.text())
                 .then(html => {
+                    console.log(`Loading ${initialItem.name}, url = ${(`https://docs.google.com/document/u/1/d/${initialItem.id}/pub?embedded=true&r=${Math.floor(Math.random() * 10000)}`)}, result html: `, html);
                     setHtml(html);
                 })
         }
@@ -69,7 +70,8 @@ const HistoryViewer: React.FunctionComponent<{
         )
     }
 
-    const parsed = parse(html, {
+    const repairedHtml = html.replace('</head>', '</head><body>') + "</body>";
+    const parsed = parse(repairedHtml, {
         replace
     });
 
